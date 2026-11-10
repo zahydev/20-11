@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Happy 20/10 ✨🌸</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    :root {
+      --pink: #ff4d6d;
+      --pink-mid: #ffd6e0;
+      --card-bg: rgba(255, 255, 255, 0.96);
+      --text-dark: #2b2d42;
+      --text-muted: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Quicksand', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 25%, #fff5f7 0%, #ffd8e2 60%, #ffccd8 100%);
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: calc(env(safe-area-inset-top) + 20px) 16px calc(env(safe-area-inset-bottom) + 20px) 16px;
+      overflow-x: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* Sticker rơi lơ lửng nền */
+    .falling {
+      position: fixed;
+      top: -10vh;
+      pointer-events: none;
+      animation: fall linear infinite;
+      z-index: 1;
+    }
+    @keyframes fall {
+      0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+      15% { opacity: 0.85; }
+      85% { opacity: 0.85; }
+      100% { transform: translateY(115vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* Nút đĩa nhạc chuẩn iOS */
+    .music-btn {
+      position: fixed;
+      top: calc(env(safe-area-inset-top) + 14px);
+      right: 16px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1.5px solid var(--pink-mid);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--pink);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(255, 77, 109, 0.15);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 100;
+      transition: transform 0.2s;
+    }
+    .music-btn:active { transform: scale(0.95); }
+    .spinning { animation: spin 3s linear infinite; }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    /* Khung card trung tâm */
+    .container {
+      max-width: 390px;
+      width: 100%;
+      position: relative;
+      z-index: 10;
+    }
+
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-radius: 30px;
+      padding: 30px 22px;
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 18px 40px -10px rgba(255, 77, 109, 0.2);
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .icon-main {
+      font-size: 54px;
+      margin-bottom: 8px;
+      display: inline-block;
+      animation: bounce 2s infinite ease-in-out;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-7px); }
+    }
+
+    h1 {
+      font-size: 21px;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-bottom: 16px;
+    }
+
+    .input-code {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      border: 2px solid var(--pink-mid);
+      border-radius: 16px;
+      text-align: center;
+      outline: none;
+      background: #fffafa;
+      color: var(--pink);
+      margin-bottom: 12px;
+      transition: all 0.2s;
+      -webkit-appearance: none;
+    }
+    .input-code:focus {
+      border-color: var(--pink);
+      box-shadow: 0 0 0 3.5px rgba(255, 77, 109, 0.2);
+      background: #ffffff;
+    }
+
+    .btn-open {
+      width: 100%;
+      background: linear-gradient(135deg, #ff4d6d, #ff758f);
+      color: white;
+      border: none;
+      padding: 14px;
+      font-size: 15px;
+      font-weight: 800;
+      border-radius: 16px;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(255, 77, 109, 0.35);
+      transition: transform 0.15s;
+    }
+    .btn-open:active { transform: scale(0.97); }
+
+    .err {
+      font-size: 12.5px;
+      color: #c9184a;
+      font-weight: 700;
+      min-height: 18px;
+      margin-top: 8px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .err.show { opacity: 1; }
+
+    .shake {
+      animation: shake 0.35s both;
+    }
+    @keyframes shake {
+      10%, 90% { transform: translate3d(-2px, 0, 0); }
+      30%, 70% { transform: translate3d(-3px, 0, 0); }
+      50% { transform: translate3d(3px, 0, 0); }
+    }
+
+    /* Khung ảnh Polaroid */
+    #letterView {
+      display: none;
+      animation: popIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.92) translateY(12px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .photo-polaroid {
+      background: #ffffff;
+      padding: 8px 8px 12px 8px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(255, 77, 109, 0.18);
+      border: 1px solid rgba(255, 182, 193, 0.4);
+      margin: 0 auto 16px auto;
+      max-width: 270px;
+      transform: rotate(-1.5deg);
+      transition: transform 0.25s ease;
+    }
+    .photo-polaroid:hover {
+      transform: rotate(0deg) scale(1.02);
+    }
+
+    .photo-polaroid img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      object-position: center top;
+      border-radius: 14px;
+      display: block;
+      background: #fff0f3;
+    }
+
+    .letter-body {
+      background: #fff8fa;
+      border-left: 3.5px solid var(--pink);
+      border-radius: 16px;
+      padding: 16px;
+      font-size: 14.5px;
+      line-height: 1.68;
+      color: #334155;
+      text-align: left;
+      margin-bottom: 14px;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+
+    .sender-tag {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--pink);
+      text-align: right;
+      margin-bottom: 16px;
+    }
+
+    .btn-close {
+      background: #f1f5f9;
+      color: #475569;
+      border: none;
+      padding: 12px 18px;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 14px;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.15s;
+    }
+    .btn-close:active { background: #e2e8f0; transform: scale(0.98); }
+  </style>
+</head>
+<body>
+
+  <!-- Nút đĩa nhạc -->
+  <div class="music-btn" onclick="toggleMusic(event)">
+    <span id="disc">🎵</span>
+    <span id="musicText">Phát nhạc</span>
+  </div>
+
+  <audio id="audioPlayer" loop preload="auto">
+    <source src="nhac.mp3" type="audio/mpeg">
+  </audio>
+
+  <div class="container">
+    <!-- KHUNG NHẬP MÃ (1 - 10) -->
+    <div class="card" id="lockCard">
+      <div class="icon-main">💌</div>
+      <h1>Nhập mã mở thư ✨</h1>
+      
+      <input 
+        type="text" 
+        id="codeField" 
+        class="input-code" 
+        placeholder="Nhập mật mã được cấp trên thiệp" 
+        autocomplete="off"
+        inputmode="numeric"
+        pattern="[0-9]*"
+        onkeydown="if(event.key === 'Enter') unlock()"
+      >
+      <button class="btn-open" onclick="unlock()">Mở Thư 🌸</button>
+      
+      <div class="err" id="errorMsg">Mã chưa đúng rồi nha!</div>
+    </div>
+
+    <!-- KHUNG LỜI CHÚC VÀ ẢNH POLAROID -->
+    <div class="card" id="letterView">
+      
+      <div class="photo-polaroid">
+        <img id="viewImg" src="" alt="Ảnh kỷ niệm">
+      </div>
+
+      <h1 id="viewName">Tên Người Nhận</h1>
+      
+      <div class="letter-body" id="viewWish">
+        Lời chúc...
+      </div>
+
+      <div class="sender-tag" id="viewSender">— Lời chúc yêu thương 🌷 —</div>
+
+      <button class="btn-close" onclick="closeLetter()">Đóng lại</button>
+    </div>
+  </div>
+
+  <script>
+    const audio = document.getElementById('audioPlayer');
+    const disc = document.getElementById('disc');
+    const musicText = document.getElementById('musicText');
+    let isPlaying = false;
+
+    // --- TIẾNG PHÁO HOA WEB AUDIO API ---
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx;
+
+    function initAudioContext() {
+      if (!audioCtx) audioCtx = new AudioContext();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playFireworkSound() {
+      initAudioContext();
+      if (!audioCtx) return;
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(160, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.35);
+
+      gain.gain.setValueAtTime(0.7, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.35);
+
+      const bufferSize = audioCtx.sampleRate * 0.4;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+      const noise = audioCtx.createBufferSource();
+      noise.buffer = buffer;
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.value = 1200;
+
+      const noiseGain = audioCtx.createGain();
+      noiseGain.gain.setValueAtTime(0.6, audioCtx.currentTime);
+      noiseGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+
+      noise.connect(filter);
+      filter.connect(noiseGain);
+      noiseGain.connect(audioCtx.destination);
+      noise.start(audioCtx.currentTime + 0.05);
+    }
+
+    // --- PHÁT NHẠC NỀN KHI CHẠM ---
+    function playAudio() {
+      initAudioContext();
+      if (!isPlaying) {
+        audio.play().then(() => {
+          isPlaying = true;
+          disc.classList.add('spinning');
+          musicText.innerText = "Đang phát 🎵";
+          window.removeEventListener('click', triggerMusic);
+          window.removeEventListener('touchstart', triggerMusic);
+          window.removeEventListener('keydown', triggerMusic);
+        }).catch(() => {});
+      }
+    }
+
+    function triggerMusic() { playAudio(); }
+    window.addEventListener('click', triggerMusic);
+    window.addEventListener('touchstart', triggerMusic);
+    window.addEventListener('keydown', triggerMusic);
+
+    function toggleMusic(e) {
+      if (e) e.stopPropagation();
+      if (isPlaying) {
+        audio.pause();
+        disc.classList.remove('spinning');
+        musicText.innerText = "Tạm dừng";
+        isPlaying = false;
+      } else {
+        playAudio();
+      }
+    }
+
+    // Sticker rơi lơ lửng
+    const icons = ['🌸', '✨', '🌷', '🎀', '🍓', '💖'];
+    for (let i = 0; i < 15; i++) {
+      const el = document.createElement('div');
+      el.className = 'falling';
+      el.innerText = icons[Math.floor(Math.random() * icons.length)];
+      el.style.left = Math.random() * 95 + 'vw';
+      el.style.fontSize = (15 + Math.random() * 14) + 'px';
+      el.style.animationDuration = (6 + Math.random() * 6) + 's';
+      el.style.animationDelay = (Math.random() * 5) + 's';
+      document.body.appendChild(el);
+    }
+
+    // 🌸 DANH SÁCH 10 BỨC THƯ (1 ĐẾN 7: KTX | 8: CÔ GIÁO | 9 & 10: BẠN CÙNG LỚP)
+    const letters = {
+      // --- 7 CHỊ KTX ---
+      "Huonggiang": {
+        name: "Chị Giang 🌷",
+        img: "anh1.jpg",
+        wish: "Chào chị, chưa có quà gì to tát ngoài chút lòng thành này. Chúc chị 20/10 thật nhiều niềm vui, sức khỏe dồi dào, deadline nào cũng qua êm đẹp và không rớt môn nhé, túi tiền rủng rỉnh luôn nha!",
+        sender: "— Từ Huy - Quân - Trí —"
+      },
+      "binhnhi": {
+        name: "Chị Nhi 🧋",
+        img: "anh2.jpg",
+        wish: "3 anh em tụi em chúc chị 20/10 ngập tràn niềm vui! Mới quen nhưng thấy chị siêu thoải mái và vui tính. Chúc chị lúc nào cũng rạng rỡ thật nhiều niềm vui, sức khỏe dồi dào!",
+        sender: "— Từ Huy - Quân - Trí —"
+      },
+      "Khanhbang": {
+        name: "Chị Băng ✨",
+        img: "anh3.jpg",
+        wish: "3 anh em tụi em chúc chị 20/10 ngập tràn niềm vui! Mới quen nhưng thấy chị siêu thoải mái và vui tính. Chúc chị lúc nào cũng rạng rỡ thật nhiều niềm vui, sức khỏe dồi dào!",
+        sender: "— Từ Huy - Quân - Trí —"
+      },
+      "Ngochan": {
+        name: "Chị hân 🌸",
+        img: "anh4.jpg",
+        wish: "Chào chị! Tụi em 3 đứa mới về phòng chưa lâu, chưa có quà gì to tát ngoài chút lòng thành này. Chúc chị 20/10 thật nhiều niềm vui, sức khỏe dồi dào, deadline nào cũng qua êm đẹp, làm việc hiệu quả túi tiền rủng rỉnh!",
+        sender: "— Từ Huy - Quân - Trí —"
+      },
+      "Ngocmai": {
+        name: "Chị Mai 🎀",
+        img: "anh5.jpg",
+        wish: "Chào chị! Tụi em 3 đứa mới về phòng chưa lâu, chưa có quà gì to tát ngoài chút lòng thành này. Chúc chị 20/10 thật nhiều niềm vui, sức khỏe dồi dào, deadline nào cũng qua êm đẹp !",
+        sender: "— Từ Huy - Quân - Trí —"
+      },
+      "Phuonganh": {
+        name: "Chị Phương Anh 🎧",
+        img: "anh6.jpg",
+        wish: "Chào chị! Tụi em 3 đứa mới về phòng chưa lâu, chưa có quà gì to tát ngoài chút lòng thành này. Chúc chị 20/10 thật nhiều niềm vui, sức khỏe dồi dào, deadline nào cũng qua êm đẹp !",
+        sender: "— Từ Huy - Quân - Trí —"
+      },
+      "Nhuquynh": {
+        name: "Chị Quỳnh 🍓",
+        img: "anh7.jpg",
+        wish: "Mừng 20/10 chị Bảy siêu đáng yêu! Cảm ơn chị đã rất thân thiện với 3 anh em từ ngày đầu dọn vào. Chúc chị nhận được thật nhiều hoa và quà, thi cử hanh thông và ví tiền lúc nào cũng rủng rỉnh nha!",
+        sender: "— Từ Huy - Quân - Trí —"
+      },
+
+      // --- CÔ GIÁO ---
+      "coquynhxinhgai": {
+      name: "Cô Quỳnh kính yêu 💐",
+        img: "anh8.jpg",
+        wish: "Nhân ngày Phụ nữ Việt Nam 20/10, chúng em xin kính chúc Cô luôn dồi dào sức khỏe, luôn tươi trẻ, tràn đầy nhiệt huyết và hạnh phúc bên gia đình! Cảm ơn Cô vì sự tận tâm, dìu dắt và truyền cảm hứng cho chúng em trong từng tiết học ạ!",
+        sender: "— Kính chúc Cô / Tập thể chúng em 🌸 —"
+      },
+
+      // --- 2 BẠN NỮ TRONG LỚP ---
+      "Gianghi": {
+        name: "Bạn Nghi ✨",
+        img: "anh9.jpg",
+        wish: "Chúc bạn 20/10 thật nhiều hoa, nhiều quà và ngập tràn niềm vui nha! Chúc bạn kỳ này học hành suôn sẻ, qua môn điểm cao chót vót, lúc nào cũng xinh xắn, vui tươi!",
+        sender: "— Từ Huy - Tâm - Huân - Đức ✨ —"
+      },
+      "hanhan": {
+        name: "Bạn Hân 🎀",
+        img: "anh10.jpg",
+        wish: "Happy 20/10 nha bạn ơi! Chúc bạn ngày hôm nay nhận được thật nhiều điều bất ngờ dễ thương. Chúc bạn luôn giữ nụ cười tươi, kỳ này học hành suôn sẻ, qua môn điểm cao chót vót",
+        sender: "— Từ Huy - Tâm - Huân - Đức ✨ —"
+      }
+    };
+
+    const lockCard = document.getElementById("lockCard");
+    const letterView = document.getElementById("letterView");
+    const codeField = document.getElementById("codeField");
+    const errorMsg = document.getElementById("errorMsg");
+
+    function unlock() {
+      playAudio();
+      const code = codeField.value.trim();
+
+      if (letters[code]) {
+        const item = letters[code];
+        errorMsg.classList.remove("show");
+
+        // Đổ ảnh, tên, lời chúc và người gửi tương ứng
+        document.getElementById("viewImg").src = item.img;
+        document.getElementById("viewName").innerText = item.name;
+        document.getElementById("viewWish").innerText = item.wish;
+        document.getElementById("viewSender").innerText = item.sender;
+
+        lockCard.style.display = "none";
+        letterView.style.display = "block";
+
+        playFireworkSound();
+
+        confetti({
+          particleCount: 75,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#ff4d6d', '#ff758f', '#ffb3c1', '#ffffff']
+        });
+      } else {
+        errorMsg.classList.add("show");
+        lockCard.classList.add("shake");
+        setTimeout(() => lockCard.classList.remove("shake"), 400);
+      }
+    }
+
+    function closeLetter() {
+      letterView.style.display = "none";
+      lockCard.style.display = "block";
+      codeField.value = "";
+      errorMsg.classList.remove("show");
+      codeField.focus();
+    }
+  </script>
+</body>
+</html>
